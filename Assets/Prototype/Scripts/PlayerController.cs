@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour {
 
     [SerializeField]
     private float originalTimeScale;
+    public Texture2D crosshair;
+    [SerializeField]
+    private bool isTimeFrozen = false;
 
 	// Use this for initialization
 	void Start ()
@@ -38,6 +41,7 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        isTimeFrozen = Time.timeScale == 0.0f;
         direction.x = Input.GetAxisRaw("Horizontal");
         direction.y = Input.GetAxisRaw("Vertical");
         velocity.Set(direction.x * speed, direction.y * speed);
@@ -49,6 +53,11 @@ public class PlayerController : MonoBehaviour {
             //use this instead of Time.time as Time.time is affected by Time.timescale
             startSlowdownTime = Time.realtimeSinceStartup;
             StartCoroutine(SlowdownTime());
+        }
+
+        if(isTimeFrozen)
+        {
+            //enable click controls here
         }
 
 	}
@@ -76,6 +85,9 @@ public class PlayerController : MonoBehaviour {
     IEnumerator FreezeTime()
     {
         Debug.Log("Time frozen!");
+        //change cursor to a crosshair
+        Cursor.SetCursor(crosshair, Vector2.zero, CursorMode.ForceSoftware);
+
         yield return new WaitForSecondsRealtime(freezeDuration);
         yield return StartCoroutine(SpeedupTime());
     }
@@ -84,6 +96,9 @@ public class PlayerController : MonoBehaviour {
     IEnumerator SpeedupTime()
     {
         Debug.Log("Speeding UP");
+
+        //change cursor back to default cursor
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         float ptol = 0.00390625f;
         float startSpeedUpTime = Time.realtimeSinceStartup;
         float elapsedTime = Time.realtimeSinceStartup - startSpeedUpTime;

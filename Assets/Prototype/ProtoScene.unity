@@ -316,6 +316,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 500
   slowdownKey: 106
+  slowdownActive: 0
+  startSlowdownTime: 0
+  abilityDuration: 0
+  slowdownDuration: 2
+  freezeDuration: 3
+  speedupDuration: 2
+  originalTimeScale: 0
+  crosshair: {fileID: 2800000, guid: ecf7aac915ce0fc45bef4ff66c7521f9, type: 3}
+  isTimeFrozen: 0
 --- !u!1001 &401412049
 Prefab:
   m_ObjectHideFlags: 0

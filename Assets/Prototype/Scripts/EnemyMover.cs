@@ -6,9 +6,9 @@ using UnityEngine;
 public class EnemyMover : MonoBehaviour {
 
     public float moveSpeed;
-    public float patrolTime;
+    public float patrolDist;
     [SerializeField]
-    private float patrolDist = 0;
+    private float patrolTime;
     private int yDirection;
     private Rigidbody2D rb;
     private Vector2 velocity;
@@ -19,6 +19,8 @@ public class EnemyMover : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         yDirection = -1;
         velocity = new Vector2(0.0f, 0.0f);
+        Debug.Assert(moveSpeed != 0.0f);
+        patrolTime = (1 / moveSpeed) * patrolDist;
         StartCoroutine(ChangeDirection());
 	}
 	
@@ -33,9 +35,9 @@ public class EnemyMover : MonoBehaviour {
     {
         while(true)
         {
-            patrolDist = patrolTime * moveSpeed * Time.deltaTime;
             yDirection = (yDirection == 1) ? -1 : 1;
-            yield return new WaitForSeconds(patrolTime);
+            //real time seems to have not much effect here.. when the patrol units are slowed down.
+            yield return new WaitForSecondsRealtime(patrolTime);
         }
     }
 }
