@@ -70,7 +70,8 @@ public class PlayerController : MonoBehaviour {
         if(!slowdownActive && Input.GetKeyDown(slowdownKey))
         {
             //spawn arrow here
-            arrowGO = Instantiate<GameObject>(arrowPrefab);
+            Vector3 arrowPos = transform.TransformPoint(Vector3.right * 2.0f);
+            arrowGO = Instantiate<GameObject>(arrowPrefab, arrowPos, Quaternion.identity);
 
             slowdownActive = true;
             //use this instead of Time.time as Time.time is affected by Time.timescale

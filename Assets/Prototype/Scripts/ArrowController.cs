@@ -14,6 +14,7 @@ public class ArrowController : MonoBehaviour {
     [SerializeField]
     private Vector2 velocity;
     private Rigidbody2D rb;
+    public float destructionDelay = 2.0f;
 
     //arrow needs to know about the targets player controller selected
     private PlayerController pController;
@@ -33,6 +34,7 @@ public class ArrowController : MonoBehaviour {
 
     private void Awake()
     {
+        pController = FindObjectOfType<PlayerController>();
         originalPos = transform.position;
     }
 
@@ -41,7 +43,6 @@ public class ArrowController : MonoBehaviour {
 
         speed = 300;
         oldTimeScale = Time.timeScale;
-        pController = FindObjectOfType<PlayerController>();
         rb = GetComponent<Rigidbody2D>();
 	}
 	
@@ -80,6 +81,9 @@ public class ArrowController : MonoBehaviour {
         }
         else if(areTargetsAvailable) //if the targets were previously available, but are now all eliminated..
         {
+
+            TrailRenderer trail = transform.GetComponentInChildren<TrailRenderer>();
+            trail.enabled = false;
             //return arrow back to original position and get destroyed.
            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime * speed);
 
@@ -101,7 +105,7 @@ public class ArrowController : MonoBehaviour {
     IEnumerator DestroyDelay()
     {
         canDestroy = true;
-        yield return new WaitForSecondsRealtime(2.0f);
+        yield return new WaitForSecondsRealtime(destructionDelay);
         Destroy(this.gameObject);
         canDestroy = false;
         yield return null;
