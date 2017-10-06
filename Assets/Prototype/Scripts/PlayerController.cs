@@ -61,7 +61,14 @@ public class PlayerController : MonoBehaviour {
         direction.x = Input.GetAxisRaw("Horizontal");
         direction.y = Input.GetAxisRaw("Vertical");
         velocity.Set(direction.x * speed, direction.y * speed);
-        rb.velocity = velocity * Time.deltaTime;
+        //use this temporarily to demonstrate that the player can in fact move at full speed
+        //independent of everyone else being slowed down
+        transform.position += (Vector3)velocity * Time.unscaledDeltaTime;
+        //rigidbodies get updated internally in a physics update.. therefore, we cannot
+        //use rigidbodies for collision detection if we want to have player not be affected
+        //by time scale...unless we create our own custom "environment scale" for all gamebojects
+        //but the player to get affected by
+        //rb.velocity = velocity * Time.unscaledDeltaTime;
 
         if(!slowdownActive && Input.GetKeyDown(slowdownKey))
         {
@@ -147,14 +154,14 @@ public class PlayerController : MonoBehaviour {
             elapsedTime = Time.realtimeSinceStartup - startSlowdownTime;
         }
 
-        Debug.Log("ELAPSED");
+        //Debug.Log("ELAPSED");
         yield return StartCoroutine(FreezeTime());
     }
 
     IEnumerator FreezeTime()
     {
         isTimeFrozen = true;
-        Debug.Log("Time frozen!");
+        //Debug.Log("Time frozen!");
         //change cursor to a crosshair
         Cursor.SetCursor(crosshair, Vector2.zero, CursorMode.Auto);
 
@@ -168,7 +175,7 @@ public class PlayerController : MonoBehaviour {
         //copy to List to see which targets were selected by player in the inspector
         targetList = targetSet.ToList<GameObject>();
         isTimeFrozen = false;
-        Debug.Log("Speeding UP");
+        //Debug.Log("Speeding UP");
 
         //change cursor back to default cursor
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
