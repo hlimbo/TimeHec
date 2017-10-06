@@ -26,8 +26,7 @@ public class PlayerController : MonoBehaviour {
     [SerializeField]
     private float originalTimeScale;
     public Texture2D crosshair;
-    [SerializeField]
-    private bool isTimeFrozen = false;
+    public bool isTimeFrozen = false;
 
     //arrow controller needs know its targets to seek to
     public List<GameObject> targetList;//used to see in the inspector which targets were selected by the player
