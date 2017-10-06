@@ -28,24 +28,31 @@ public class PlayerController : MonoBehaviour {
     public Texture2D crosshair;
     [SerializeField]
     private bool isTimeFrozen = false;
-    [SerializeField]
-    List<GameObject> targetList;//used to see in the inspector which targets were selected by the player
 
-    HashSet<GameObject> targetSet;
+    //arrow controller needs know its targets to seek to
+    public List<GameObject> targetList;//used to see in the inspector which targets were selected by the player
+    public HashSet<GameObject> targetSet;
 
     [SerializeField]
     private bool hasDestructionStarted = false;
 
-	// Use this for initialization
-	void Start ()
+    public GameObject arrowPrefab;
+    public GameObject arrowGO;
+
+    private void Awake()
+    {
+        targetList = new List<GameObject>();
+        targetSet = new HashSet<GameObject>();
+    }
+
+    // Use this for initialization
+    void Start ()
     {
         rb = GetComponent<Rigidbody2D>();
         direction = new Vector2(0.0f, 0.0f);
         velocity = new Vector2(0.0f, 0.0f);
         abilityDuration = slowdownDuration + freezeDuration;
         originalTimeScale = Time.timeScale;
-        targetList = new List<GameObject>();
-        targetSet = new HashSet<GameObject>();
 	}
 	
 	// Update is called once per frame
@@ -58,6 +65,9 @@ public class PlayerController : MonoBehaviour {
 
         if(!slowdownActive && Input.GetKeyDown(slowdownKey))
         {
+            //spawn arrow here
+            arrowGO = Instantiate<GameObject>(arrowPrefab);
+
             slowdownActive = true;
             //use this instead of Time.time as Time.time is affected by Time.timescale
             startSlowdownTime = Time.realtimeSinceStartup;
@@ -94,11 +104,11 @@ public class PlayerController : MonoBehaviour {
         }
 
         //will need to implement a state enum.....for polish possibly
-        if (!hasDestructionStarted && Time.timeScale == originalTimeScale)
-        {
-            hasDestructionStarted = true;
-            StartCoroutine(DestroyTargets());
-        }
+        //if (!hasDestructionStarted && Time.timeScale == originalTimeScale)
+        //{
+        //    hasDestructionStarted = true;
+        //    StartCoroutine(DestroyTargets());
+        //}
 
     }
 
@@ -111,7 +121,7 @@ public class PlayerController : MonoBehaviour {
             targetList.RemoveAt(0);
             targetSet.Remove(targetToRemove);
             yield return new WaitForSeconds(2.0f);
-            GameObject.Destroy(targetToRemove);
+            Destroy(targetToRemove);
         }
 
         hasDestructionStarted = false;
