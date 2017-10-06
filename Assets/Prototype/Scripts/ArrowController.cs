@@ -48,11 +48,15 @@ public class ArrowController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        //remove arrow when time is speeding back up
         if(Time.timeScale > oldTimeScale)
         {
             //destroy the arrow game object if no targets were seeked
             if (pController.targetList.Count == 0)
+            {
+                Debug.Log("list is empty");
                 Destroy(this.gameObject);
+            }
             else
                 areTargetsAvailable = true;
 
@@ -64,27 +68,31 @@ public class ArrowController : MonoBehaviour {
         {
             //arrow needs to home towards target!
             targetToRemove = pController.targetList[0];
-            direction = (targetToRemove.transform.position - this.transform.position).normalized;
+
+            Vector2 targetDiff = targetToRemove.transform.position - this.transform.position;
+            float angle = Mathf.Atan2(targetDiff.y, targetDiff.x) * Mathf.Rad2Deg;
+            Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * speed);
+
+            direction = targetDiff.normalized;
             velocity = speed * direction;
             rb.velocity = velocity * Time.deltaTime;
         }
         else if(areTargetsAvailable) //if the targets were previously available, but are now all eliminated..
         {
             //return arrow back to original position and get destroyed.
+           transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime * speed);
+
             float turnaroundSpeed = 10.0f;
-            rb.position = Vector2.MoveTowards(rb.position, originalPos, turnaroundSpeed * Time.deltaTime);
-            if (rb.position == originalPos)
+            transform.position = Vector2.MoveTowards(transform.position, originalPos, turnaroundSpeed * Time.deltaTime);
+
+            if ((Vector2)transform.position == originalPos)
             {
                 Debug.Log("arrived!");
                 areTargetsAvailable = false;
                 rb.velocity = Vector2.zero;
                 if (!canDestroy)
                     StartCoroutine(DestroyDelay());
-            }
-            else
-            {
-                Debug.Log("rb position: " + rb.position);
-                Debug.Log("transform.position: " + transform.position);
             }
         }
 
@@ -105,7 +113,6 @@ public class ArrowController : MonoBehaviour {
         if(targetToRemove == collision.gameObject)
         {
             pController.targetList.RemoveAt(0);
-            pController.targetSet.Remove(targetToRemove);
             GameObject.Destroy(targetToRemove);
         }
     }

@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour {
 
     //arrow controller needs know its targets to seek to
     public List<GameObject> targetList;//used to see in the inspector which targets were selected by the player
-    public HashSet<GameObject> targetSet;
 
     [SerializeField]
     private bool hasDestructionStarted = false;
@@ -42,7 +41,6 @@ public class PlayerController : MonoBehaviour {
     private void Awake()
     {
         targetList = new List<GameObject>();
-        targetSet = new HashSet<GameObject>();
     }
 
     // Use this for initialization
@@ -105,7 +103,8 @@ public class PlayerController : MonoBehaviour {
                 if(something.collider != null)
                 {
                     Debug.Log(something.collider.gameObject.name);
-                    targetSet.Add(something.collider.gameObject);
+                    if (!targetList.Contains(something.collider.gameObject))
+                        targetList.Add(something.collider.gameObject);
                 }
             }
         }
@@ -122,11 +121,10 @@ public class PlayerController : MonoBehaviour {
     IEnumerator DestroyTargets()
     {
         //destroy all targets every 2 seconds
-        while(targetSet.Count != 0 && targetList.Count != 0)
+        while(targetList.Count != 0)
         {
             GameObject targetToRemove = targetList[0];
             targetList.RemoveAt(0);
-            targetSet.Remove(targetToRemove);
             yield return new WaitForSeconds(2.0f);
             Destroy(targetToRemove);
         }
@@ -172,8 +170,6 @@ public class PlayerController : MonoBehaviour {
     //serve as a cooldown time for the player !
     IEnumerator SpeedupTime()
     {
-        //copy to List to see which targets were selected by player in the inspector
-        targetList = targetSet.ToList<GameObject>();
         isTimeFrozen = false;
         //Debug.Log("Speeding UP");
 
