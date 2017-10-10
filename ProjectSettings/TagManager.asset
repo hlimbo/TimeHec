@@ -6,6 +6,7 @@ TagManager:
   tags:
   - target
   - arrow
+  - cloned_black_squares
   layers:
   - Default
   - TransparentFX
