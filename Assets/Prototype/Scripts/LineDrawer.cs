@@ -34,12 +34,9 @@ public class LineDrawer : MonoBehaviour {
                 RaycastHit2D something = Physics2D.Raycast(mousePos, Vector2.zero, 0f);
                 if (something.collider != null)
                 {
-                    if (!pc.targetList.Contains(something.collider.gameObject))
-                    {
-                        lr.positionCount += 1;
-                        mousePos.z = 0.0f;
-                        lr.SetPosition(currentIndex++, mousePos);
-                    }
+                    lr.positionCount += 1;
+                    mousePos.z = 0.0f;
+                    lr.SetPosition(currentIndex++, mousePos);
                 }
             }
         }
