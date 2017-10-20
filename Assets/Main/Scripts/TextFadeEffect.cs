@@ -26,6 +26,8 @@ public class TextFadeEffect : MonoBehaviour {
         Assert.IsTrue(gText != null, gameObject.name + " does not have a Text Component attached");
         Assert.IsTrue(displayDelay != 0.0f, "Warning: " + gameObject.name + " display delay must be a NON-zero value");
         //invisible text
+        //Color rgba values range [0,1]
+        //Color32 rgba values range(0,255]
         gText.color = new Color(gText.color.r, gText.color.g, gText.color.b, invisibleAlpha);
     }
 
