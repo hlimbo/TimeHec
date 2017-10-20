@@ -19,6 +19,11 @@ public class CooldownTimer : MonoBehaviour {
     //I'm using enabled flag because it is convenient to see when this component is on or off cooldown in the editor
     public bool isOnCooldown { get { return this.enabled; } set { this.enabled = value; } }
    
+    public float GetCurrentCooldownTime()
+    {
+        return isOnCooldown ? duration - Mathf.Floor(elapsedTime) : 0.0f;
+    }
+
 	void Awake ()
     {
         //disable this script from calling Update() every frame
@@ -27,34 +32,36 @@ public class CooldownTimer : MonoBehaviour {
 
     void OnEnable()
     {
-        //StartCoroutine(Countdown());
+        StartCoroutine(Countdown());
         print("starting");
         startTime = Time.time;
     }
 
     void OnDisable()
     {
-        //StopCoroutine(Countdown());
+        StopCoroutine(Countdown());
         print("stopping");
     }
 
     //alternate way of counting down if needed
-    void Update()
-    {
-        elapsedTime = Time.time - startTime;
-        if (elapsedTime < duration)
-            WaitOneSecond();
-        else
-            isOnCooldown = false;
-    }
+    //void Update()
+    //{
+    //    elapsedTime = Time.time - startTime;
+    //    if (elapsedTime < duration)
+    //        WaitOneSecond();
+    //    else
+    //        isOnCooldown = false;
+    //}
 
-    IEnumerator WaitOneSecond()
-    {
+    //IEnumerator WaitOneSecond()
+    //{
         
-        yield return new WaitForSeconds(updateFrequency);
-    }
+    //    yield return new WaitForSeconds(updateFrequency);
+    //}
 
     //first way of doing it
+    //advantage over the alternate way is that I can use either awake or start function to init variables
+    //this only updates the elapsedTime once every updateFrequency value (e.g. once every second)
     IEnumerator Countdown()
     {
         startTime = Time.time;
