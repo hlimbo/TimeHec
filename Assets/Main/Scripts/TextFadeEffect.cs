@@ -13,7 +13,7 @@ public class TextFadeEffect : MonoBehaviour {
     [Tooltip("If ticked, fade effect ignores Unity's time scale")]
     public bool ignoreTimeScale;
     [SerializeField]
-    private float effectDuration;
+    private float effectDuration; //debug 
 
     private Text gText;
     //invisible text ~ http://answers.unity3d.com/questions/881620/uigraphiccrossfadealpha-only-works-for-decrementin.html
