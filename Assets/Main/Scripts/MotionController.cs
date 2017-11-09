@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Controller moves towards the direction of where the user swipes his/her
+//finger on the phone..
+//This attempts to resolve the issue of not being able to see the player vessel
+//due to finger being on top of player vessel.
 public class MotionController : MonoBehaviour {
 
     [SerializeField]
@@ -16,11 +20,18 @@ public class MotionController : MonoBehaviour {
     [SerializeField]
     private Vector3 deltaMousePos;
 
+    //debug stuffz
+    public float motionSpeed;
+    public Vector3 moveVelocity;
+
     void Start()
     {
+        motionSpeed = 0.0f;
+        moveVelocity = Vector3.zero;
+
         oldMousePos = Vector3.zero;
         newMousePos = Vector3.zero;
-        movePercent = Input.touchSupported ? 1.0f : 0.5f;
+        movePercent = Input.touchSupported ? 0.01f : 0.5f;
     }
 
 	void Update ()
@@ -31,19 +42,11 @@ public class MotionController : MonoBehaviour {
             {
                 switch(Input.GetTouch(0).phase)
                 {
-                    case TouchPhase.Began:
-                        newMousePos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        break;
                     case TouchPhase.Moved:
-                        //Vector3 deltaPos = Camera.main.ScreenToWorldPoint((Vector3)Input.GetTouch(0).deltaPosition);
-                        oldMousePos.Set(newMousePos.x, newMousePos.y, newMousePos.z);
-                        newMousePos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        deltaMousePos = newMousePos - oldMousePos;
-                        transform.position = Vector3.Lerp(transform.position, transform.position + deltaMousePos, movePercent);
-                        break;
-                    case TouchPhase.Stationary:
-                        newMousePos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-                        oldMousePos.Set(newMousePos.x, newMousePos.y, newMousePos.z);
+                        deltaMousePos = Input.GetTouch(0).deltaPosition;
+                        motionSpeed = deltaMousePos.magnitude / Input.GetTouch(0).deltaTime;
+                        moveVelocity = motionSpeed * deltaMousePos.normalized * Time.deltaTime * movePercent;
+                        transform.position += moveVelocity;
                         break;
                 }
             }
