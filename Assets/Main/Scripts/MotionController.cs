@@ -24,11 +24,8 @@ public class MotionController : MonoBehaviour {
     public float motionSpeed;
     public Vector3 moveVelocity;
 
-    Vector3 oldRawMousePos;
-
     void Start()
     {
-        oldRawMousePos = Vector3.zero;
         motionSpeed = 0.0f;
         moveVelocity = Vector3.zero;
 
@@ -83,36 +80,18 @@ public class MotionController : MonoBehaviour {
     {
         return v * v * (3.0f - 2.0f * v);
     }
-
-    Transform oldTransform;
     void Movement3()
     {
-        //smoothly move towards on touch began
-        if(Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("mouse pressed");
-            oldTransform = transform;
-            //Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //Vector3 lockPosition = oldTransform.TransformPoint(Vector3.down);// 1 unity unit below triangle
-            ////The further away mouse press location is from vessel, the slower the vessel moves to mouse press location
-            //float p = Mathf.InverseLerp(0.0f, 1.0f, lockPosition.magnitude / (targetPos - lockPosition).magnitude);
-            //lockPosition = Vector3.MoveTowards(lockPosition, targetPos, (targetPos - lockPosition).magnitude);
-            ////lockPosition = Vector3.Lerp(lockPosition, targetPos, p);
-            //transform.position = lockPosition + Vector3.up;
-            //oldRawMousePos = Input.mousePosition;
-        }
-
-        //follow where mouse cursor points towards with some
+        //follow where mouse cursor points towards with some ~ NO SMOOTHING when clicking far away from player vessel
         //offset so the vessel isn't directly on top of mouse cursor / finger
-        else if ((Input.mousePosition - oldRawMousePos).magnitude > tolerance && Input.GetMouseButton(0))
+        //snappy movement
+        if (Input.GetMouseButton(0))
         {
-            Debug.Log("mouse held");
             Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 lockPosition = oldTransform.TransformPoint(Vector3.down);// 1 unity unit below triangle
+            Vector3 lockPosition = transform.TransformPoint(Vector3.down);// 1 unity unit below triangle
             lockPosition = Vector3.Lerp(lockPosition, targetPos, movePercent);
             lockPosition.z = 0.0f;
             transform.position = lockPosition + Vector3.up;
-            oldRawMousePos = Input.mousePosition;
         }
     }
 
