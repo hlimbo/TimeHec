@@ -12,12 +12,13 @@ public class MotionDebug : MonoBehaviour {
     public Text movePercent;
     public Slider percentSlider;
 
-    [Range(0.0f,1.0f)]
-    public float percent;
+    [Range(0.0f, 1.0f)]
+    public float percent = 0.5f;
 
 	// Use this for initialization
 	void Awake () {
         controller = FindObjectOfType<MotionController>();
+        percentSlider.value = percent;
 	}
 	
 	// Update is called once per frame
