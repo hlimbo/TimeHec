@@ -8,8 +8,7 @@ using UnityEngine;
 //due to finger being on top of player vessel.
 public class MotionController : MonoBehaviour {
 
-    [SerializeField]
-    private float movePercent;
+    public float movePercent;
     //2^-7
     private float tolerance = 0.0078125f;
 
@@ -24,8 +23,15 @@ public class MotionController : MonoBehaviour {
     public float motionSpeed;
     public Vector3 moveVelocity;
 
+    //positions for touch are relative to the device's screen resolution (e.g. 1080x1920)
+    private Vector2 oldTouchPos;
+    private Vector2 newTouchPos;
+
     void Start()
     {
+        oldTouchPos = Vector2.zero;
+
+
         motionSpeed = 0.0f;
         moveVelocity = Vector3.zero;
 
@@ -37,7 +43,10 @@ public class MotionController : MonoBehaviour {
 
 	void Update ()
     {
-        Movement3();
+        if (Input.touchSupported)
+            TouchMovement2();
+        else
+            MouseMovement2();
     }
 
     //move based on the direction of mouse swipe
@@ -62,13 +71,14 @@ public class MotionController : MonoBehaviour {
     {
         if (Input.touchCount == 1)
         {
+            movePercent = 0.01f;
             switch (Input.GetTouch(0).phase)
             {
                 //movePercent needs to be 0.01 here
                 case TouchPhase.Moved:
                     //move ship in the direction of finger swipe
                     deltaMousePos = Input.GetTouch(0).deltaPosition;
-                    motionSpeed = deltaMousePos.magnitude / Input.GetTouch(0).deltaTime;
+                    motionSpeed = deltaMousePos.magnitude / Input.GetTouch(0).deltaTime;//finger motion speed e.g. how fast or slow finger swipes on screen
                     moveVelocity = motionSpeed * deltaMousePos.normalized * Time.deltaTime * movePercent;
                     transform.position += moveVelocity;
                     break;
@@ -80,7 +90,7 @@ public class MotionController : MonoBehaviour {
     {
         return v * v * (3.0f - 2.0f * v);
     }
-    void Movement3()
+    void MouseMovement2()
     {
         //follow where mouse cursor points towards with some ~ NO SMOOTHING when clicking far away from player vessel
         //offset so the vessel isn't directly on top of mouse cursor / finger
@@ -92,6 +102,30 @@ public class MotionController : MonoBehaviour {
             lockPosition = Vector3.Lerp(lockPosition, targetPos, movePercent);
             lockPosition.z = 0.0f;
             transform.position = lockPosition + Vector3.up;
+        }
+    }
+
+    void TouchMovement2()
+    {
+        //1 finger touch
+        if(Input.touchCount == 1)
+        {
+            movePercent = 0.15f;
+            Touch oneTouch = Input.GetTouch(0);
+            switch (oneTouch.phase)
+            {
+                case TouchPhase.Moved:
+                    Vector3 targetPos = Camera.main.ScreenToWorldPoint(oneTouch.position);
+                    if ((targetPos - transform.position).sqrMagnitude > tolerance)
+                    {
+                        Vector3 lockPosition = transform.TransformPoint(Vector3.down);
+                        lockPosition = Vector3.Lerp(lockPosition, targetPos, movePercent);
+                        lockPosition.z = 0.0f;
+                        transform.position = lockPosition + Vector3.up;
+                    }
+                    break;
+            }
+
         }
     }
 

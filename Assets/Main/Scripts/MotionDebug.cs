@@ -9,6 +9,7 @@ public class MotionDebug : MonoBehaviour {
     private MotionController controller;
     public Text touchSpeed;
     public Text moveSpeed;
+    public Text movePercent;
 
 	// Use this for initialization
 	void Awake () {
@@ -20,5 +21,6 @@ public class MotionDebug : MonoBehaviour {
     {
         touchSpeed.text = controller.motionSpeed.ToString();
         moveSpeed.text = controller.moveVelocity.ToString();
+        movePercent.text = controller.movePercent.ToString();
 	}
 }
