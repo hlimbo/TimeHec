@@ -10,6 +10,10 @@ public class MotionDebug : MonoBehaviour {
     public Text touchSpeed;
     public Text moveSpeed;
     public Text movePercent;
+    public Slider percentSlider;
+
+    [Range(0.0f,1.0f)]
+    public float percent;
 
 	// Use this for initialization
 	void Awake () {
@@ -21,6 +25,8 @@ public class MotionDebug : MonoBehaviour {
     {
         touchSpeed.text = controller.motionSpeed.ToString();
         moveSpeed.text = controller.moveVelocity.ToString();
-        movePercent.text = controller.movePercent.ToString();
+
+        percent = percentSlider.value;
+        movePercent.text = percent.ToString();
 	}
 }

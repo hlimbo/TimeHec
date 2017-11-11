@@ -27,22 +27,27 @@ public class MotionController : MonoBehaviour {
     private Vector2 oldTouchPos;
     private Vector2 newTouchPos;
 
+    private MotionDebug motionDebug;
+    void Awake()
+    {
+        motionDebug = FindObjectOfType<MotionDebug>();
+    }
+
     void Start()
     {
         oldTouchPos = Vector2.zero;
-
-
         motionSpeed = 0.0f;
         moveVelocity = Vector3.zero;
 
         oldMousePos = Vector3.zero;
         newMousePos = Vector3.zero;
         // movePercent = Input.touchSupported ? 0.01f : 0.5f;
-        movePercent = 0.5f;
+       // movePercent = 0.5f;
     }
 
 	void Update ()
     {
+        movePercent = motionDebug.percent;
         if (Input.touchSupported)
             TouchMovement2();
         else
@@ -71,7 +76,7 @@ public class MotionController : MonoBehaviour {
     {
         if (Input.touchCount == 1)
         {
-            movePercent = 0.01f;
+            //movePercent = 0.01f;
             switch (Input.GetTouch(0).phase)
             {
                 //movePercent needs to be 0.01 here
@@ -80,6 +85,7 @@ public class MotionController : MonoBehaviour {
                     deltaMousePos = Input.GetTouch(0).deltaPosition;
                     motionSpeed = deltaMousePos.magnitude / Input.GetTouch(0).deltaTime;//finger motion speed e.g. how fast or slow finger swipes on screen
                     moveVelocity = motionSpeed * deltaMousePos.normalized * Time.deltaTime * movePercent;
+                    moveVelocity.z = 0.0f;
                     transform.position += moveVelocity;
                     break;
             }
@@ -110,20 +116,21 @@ public class MotionController : MonoBehaviour {
         //1 finger touch
         if(Input.touchCount == 1)
         {
-            movePercent = 0.15f;
+           // movePercent = 0.15f;
             Touch oneTouch = Input.GetTouch(0);
-            switch (oneTouch.phase)
+            Vector3 targetPos = Camera.main.ScreenToWorldPoint(oneTouch.position);
+            if ((targetPos - transform.position).sqrMagnitude > tolerance)
             {
-                case TouchPhase.Moved:
-                    Vector3 targetPos = Camera.main.ScreenToWorldPoint(oneTouch.position);
-                    if ((targetPos - transform.position).sqrMagnitude > tolerance)
-                    {
+                switch (oneTouch.phase)
+                {
+                    case TouchPhase.Moved:
+                    case TouchPhase.Stationary:
                         Vector3 lockPosition = transform.TransformPoint(Vector3.down);
                         lockPosition = Vector3.Lerp(lockPosition, targetPos, movePercent);
                         lockPosition.z = 0.0f;
                         transform.position = lockPosition + Vector3.up;
-                    }
-                    break;
+                        break;
+                }
             }
 
         }
