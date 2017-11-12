@@ -30,8 +30,8 @@ public class TouchJoystickController : MonoBehaviour, IDragHandler, IPointerDown
         localPoint.x = localPoint.x / joystickOuter.rectTransform.sizeDelta.x;
         localPoint.y = localPoint.y / joystickOuter.rectTransform.sizeDelta.y;
 
-        Debug.Log("localPoint: " + localPoint);
-        Debug.Log("rectTransform.sizeDelta: " + joystickOuter.rectTransform.sizeDelta);
+        //Debug.Log("localPoint: " + localPoint);
+       // Debug.Log("rectTransform.sizeDelta: " + joystickOuter.rectTransform.sizeDelta);
 
         //unsure why multiplying by 2 and adding 1 here..this probably makes sure that the joystickNub is right under your finger
         //when moving it around.. this might depend on which side of the screen you put the joystick control at (left or right side?)
