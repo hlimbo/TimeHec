@@ -33,14 +33,14 @@ public class CooldownTimer : MonoBehaviour {
     void OnEnable()
     {
         StartCoroutine(Countdown());
-        print("starting");
+       // print("starting");
         startTime = Time.time;
     }
 
     void OnDisable()
     {
         StopCoroutine(Countdown());
-        print("stopping");
+       // print("stopping");
     }
 
     //alternate way of counting down if needed

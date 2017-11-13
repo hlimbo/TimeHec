@@ -28,9 +28,12 @@ public class MotionController : MonoBehaviour {
     private Vector2 newTouchPos;
 
     private MotionDebug motionDebug;
+    private CooldownTimer cd;
+
     void Awake()
     {
         motionDebug = FindObjectOfType<MotionDebug>();
+        cd = GetComponent<CooldownTimer>();
     }
 
     void Start()
@@ -48,10 +51,19 @@ public class MotionController : MonoBehaviour {
 	void Update ()
     {
         movePercent = motionDebug.percent;
-        if (Input.touchSupported)
-            TouchMovement2();
-        else
-            MouseMovement2();
+
+        //free movement
+        //TouchMovement1();
+        //ShieldAbility();
+
+        //tight movement
+        TouchMovement2();
+        ShieldAbility();
+
+        //if (Input.touchSupported)
+        //    TouchMovement2();
+        //else
+        //    MouseMovement2();
     }
 
     //move based on the direction of mouse swipe
@@ -113,7 +125,7 @@ public class MotionController : MonoBehaviour {
 
     void TouchMovement2()
     {
-        //1 finger touch
+        //1 finger touch ~ movement
         if(Input.touchCount == 1)
         {
            // movePercent = 0.15f;
@@ -133,6 +145,29 @@ public class MotionController : MonoBehaviour {
                 }
             }
 
+        }
+    }
+
+    void ShieldAbility()
+    {
+        if (Input.touchCount == 2) // shield ability ~ for now tapping 2 fingers on screen will activate shield
+        {
+            bool firstFingerOnScreen = Input.GetTouch(0).phase == TouchPhase.Began ||
+                Input.GetTouch(0).phase == TouchPhase.Stationary ||
+                Input.GetTouch(0).phase == TouchPhase.Moved;
+            if (!cd.isOnCooldown && firstFingerOnScreen && Input.GetTouch(1).phase == TouchPhase.Began)
+            {
+                print("shield entering cooldown");
+                cd.isOnCooldown = true;
+                transform.GetChild(0).gameObject.SetActive(true);
+            }
+
+        }
+
+        //if not on shield isn't on cooldown anymore disable its gameobject
+        if (!cd.isOnCooldown)
+        {
+            transform.GetChild(0).gameObject.SetActive(false);
         }
     }
 

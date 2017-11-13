@@ -35,6 +35,7 @@ public class TouchJoystickController : MonoBehaviour, IDragHandler, IPointerDown
 
         //unsure why multiplying by 2 and adding 1 here..this probably makes sure that the joystickNub is right under your finger
         //when moving it around.. this might depend on which side of the screen you put the joystick control at (left or right side?)
+        //Note: pivots are used as anchor points to position the GUI in viewport coordinates (0,0) to (1,1,) (normalized screen coordinates)
         float x = (joystickOuter.rectTransform.pivot.x == 1f) ? localPoint.x * 2 + 1 : localPoint.x * 2 - 1;
         float y = (joystickOuter.rectTransform.pivot.y == 1f) ? localPoint.y * 2 + 1 : localPoint.y * 2 - 1;
 
